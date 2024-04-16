@@ -75,6 +75,8 @@ func startCrawling(siteURL string, writeToExcel bool) *Stats {
 
 	if writeToExcel {
 		saveResultsToExcel(stats)
+	} else {
+		saveResultsToTxt(stats)
 	}
 
 	return stats
