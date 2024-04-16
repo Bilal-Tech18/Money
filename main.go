@@ -6,14 +6,15 @@ import (
 )
 
 func main() {
-    // Vérifier si un argument URL a été fourni
     if len(os.Args) < 2 {
         fmt.Println("Usage: go run main.go <url>")
         os.Exit(1)
     }
-    siteURL := os.Args[1] // L'URL sera le premier argument de la ligne de commande
+    siteURL := os.Args[1]
 
-	pageCount := startCrawling(siteURL)
-    fmt.Printf("Total pages visited: %d\n", pageCount)
+    stats := startCrawling(siteURL)
+    if stats != nil {
+        fmt.Printf("Total: %d pages, %d inputs, %d inputs hidden\n",
+            stats.TotalPages, stats.TotalInputs, stats.TotalHiddenInputs)
+    }
 }
-

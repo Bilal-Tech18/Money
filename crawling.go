@@ -3,33 +3,64 @@ package main
 import (
     "fmt"
     "github.com/gocolly/colly/v2"
+    "net/url"
 )
 
-func startCrawling(siteURL string) int {
-    c := colly.NewCollector()
+type Stats struct {
+    TotalPages        int
+    TotalInputs       int
+    TotalHiddenInputs int
+}
 
-    var pageCount int // Compteur de pages
+func startCrawling(siteURL string) *Stats {
+    parsedURL, err := url.Parse(siteURL)
+    if err != nil {
+        fmt.Println("Could not parse URL:", err)
+        return nil
+    }
+    domain := parsedURL.Hostname()
 
-    // Définir ce qui se passe lorsque Colly visite une page
+    c := colly.NewCollector(
+        colly.AllowedDomains(domain),
+    )
+
+    stats := &Stats{} // Initialise stats une seule fois ici
+
     c.OnHTML("html", func(e *colly.HTMLElement) {
-        pageCount++
-        fmt.Println("Visiting", e.Request.URL)
+        var inputCount int
+        var hiddenInputCount int
+
+        // Compter tous les éléments input
+        e.ForEach("input", func(_ int, el *colly.HTMLElement) {
+            inputCount++
+            stats.TotalInputs++ // Utiliser la même instance de Stats
+            // Compter spécifiquement les inputs de type hidden
+            if el.Attr("type") == "hidden" {
+                hiddenInputCount++
+                stats.TotalHiddenInputs++ // Utiliser la même instance de Stats
+            }
+        })
+
+        // Afficher les résultats pour cette page
+        fmt.Printf("Page visited: %s = %d inputs", e.Request.URL.String(), inputCount)
+        stats.TotalPages++ // Incrémenter le total des pages visitées
+        if hiddenInputCount > 0 {
+            fmt.Printf(", %d inputs hidden", hiddenInputCount)
+        }
+        fmt.Println() // Nouvelle ligne pour séparer les entrées
     })
 
-    // Gérer les erreurs
     c.OnError(func(_ *colly.Response, err error) {
         fmt.Println("Something went wrong:", err.Error())
     })
 
-    // Gérer les liens à visiter
     c.OnHTML("a[href]", func(e *colly.HTMLElement) {
         link := e.Attr("href")
-        // Visiter les liens
         c.Visit(e.Request.AbsoluteURL(link))
     })
 
-    // Commencer le crawling à partir de l'URL fournie en argument
+    // Visiter l'URL initiale
     c.Visit(siteURL)
-
-    return pageCount // Retourner le nombre de pages visitées
+    return stats // Retourner la référence à stats
 }
+
