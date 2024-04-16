@@ -12,7 +12,8 @@ type Stats struct {
     TotalHiddenInputs int
 }
 
-func startCrawling(siteURL string) *Stats {
+func startCrawling(siteURL string, writeToExcel bool) *Stats {
+    fmt.Printf("Write to Excel flag is set to: %v\n", writeToExcel)
     parsedURL, err := url.Parse(siteURL)
     if err != nil {
         fmt.Println("Could not parse URL:", err)
@@ -61,6 +62,11 @@ func startCrawling(siteURL string) *Stats {
 
     // Visiter l'URL initiale
     c.Visit(siteURL)
-    return stats // Retourner la référence à stats
-}
 
+    if writeToExcel {
+        fmt.Println("Calling saveResultsToExcel...") // Debug avant appel
+        saveResultsToExcel(stats)
+    }
+
+    return stats
+}
