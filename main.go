@@ -8,17 +8,17 @@ import (
 
 func main() {
 	excelFlag := flag.Bool("excel", false, "Enable to write output to an Excel file")
-	flag.Parse() // Cela doit être appelé après avoir défini tous les flags et avant de lire les flags
+	flag.Parse()
 
-	// Après flag.Parse(), os.Args ne contiendra que les arguments non flag
-	if len(flag.Args()) < 1 {
+	// Vérifiez si l'URL à crawler est fournie en argument
+	if flag.NArg() < 1 {
 		fmt.Println("Usage: go run main.go [--excel] <url>")
 		os.Exit(1)
 	}
 	siteURL := flag.Arg(0)
 
 	fmt.Printf("URL to crawl: %s\n", siteURL)
-	fmt.Printf("Write to Excel flag is set to: %v\n", *excelFlag) // Pour vérifier l'état du flag
+	fmt.Printf("Write to Excel flag is set to: %v\n", *excelFlag)
 
 	stats := startCrawling(siteURL, *excelFlag)
 	if stats != nil {

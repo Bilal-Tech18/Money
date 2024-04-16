@@ -1,37 +1,36 @@
 package main
 
 import (
-    "fmt"
-    "os"
-    "path/filepath"
-
-    "github.com/xuri/excelize/v2"
+	"fmt"
+	"github.com/xuri/excelize/v2"
 )
 
+// Fonction pour sauvegarder les résultats dans un fichier Excel
 func saveResultsToExcel(stats *Stats) {
-    fmt.Println("Starting to save Excel file...") // Debug message
-    // Obtenez le répertoire de travail courant
-    cwd, err := os.Getwd()
-    if err != nil {
-        fmt.Println("Failed to get current working directory:", err)
-        return
-    }
+	f := excelize.NewFile()
+	f.SetCellValue("Sheet1", "A1", "Total Pages")
+	f.SetCellValue("Sheet1", "B1", stats.TotalPages)
+	f.SetCellValue("Sheet1", "A2", "Total Inputs")
+	f.SetCellValue("Sheet1", "B2", stats.TotalInputs)
+	f.SetCellValue("Sheet1", "A3", "Total Hidden Inputs")
+	f.SetCellValue("Sheet1", "B3", stats.TotalHiddenInputs)
+	f.SetCellValue("Sheet1", "A5", "URL")
+	f.SetCellValue("Sheet1", "B5", "Inputs Count")
+	f.SetCellValue("Sheet1", "C5", "Hidden Inputs")
 
-    // Construisez le chemin complet du fichier
-    filePath := filepath.Join(cwd, "CrawlingResults.xlsx")
+	row := 6 // Commencez à la ligne 6 pour les données des pages visitées
+	for _, pageInfo := range visitedPages {
+		f.SetCellValue("Sheet1", fmt.Sprintf("A%d", row), pageInfo.URL)
+		f.SetCellValue("Sheet1", fmt.Sprintf("B%d", row), pageInfo.InputsCount)
+		f.SetCellValue("Sheet1", fmt.Sprintf("C%d", row), pageInfo.HiddenInputs)
+		row++
+	}
 
-    f := excelize.NewFile()
-    f.SetCellValue("Sheet1", "A1", "Total Pages")
-    f.SetCellValue("Sheet1", "B1", "Total Inputs")
-    f.SetCellValue("Sheet1", "C1", "Total Hidden Inputs")
-    f.SetCellValue("Sheet1", "A2", stats.TotalPages)
-    f.SetCellValue("Sheet1", "B2", stats.TotalInputs)
-    f.SetCellValue("Sheet1", "C2", stats.TotalHiddenInputs)
-
-    // Sauvegardez le fichier au chemin spécifié
-    if err := f.SaveAs(filePath); err != nil {
-        fmt.Println("Failed to save Excel file:", err)
-    } else {
-        fmt.Println("Results saved to", filePath)
-    }
+	// Sauvegardez le fichier au chemin spécifié
+	filePath := "CrawlingResults.xlsx"
+	if err := f.SaveAs(filePath); err != nil {
+		fmt.Println("Failed to save Excel file:", err)
+	} else {
+		fmt.Println("Results saved to", filePath)
+	}
 }
