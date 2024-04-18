@@ -30,7 +30,7 @@ func addVisitedPage(url string, inputsCount, hiddenInputs int) {
 }
 
 // Fonction pour démarrer le crawling
-func startCrawling(siteURL string, writeToExcel bool) *Stats {
+func startCrawling(siteURL string, writeToExcel bool, verbose bool) *Stats {
 	stats := &Stats{}
 	c := colly.NewCollector(
 		colly.AllowedDomains(getDomain(siteURL)),
@@ -61,6 +61,9 @@ func startCrawling(siteURL string, writeToExcel bool) *Stats {
 		})
 
 		// Enregistrez les informations sur la page visitée
+		if verbose {
+			fmt.Println("Page visited:", e.Request.URL, "Inputs:", inputCount, "Hidden Inputs:", hiddenInputCount)
+		}
 		addVisitedPage(e.Request.URL.String(), inputCount, hiddenInputCount)
 		stats.TotalPages++
 	})

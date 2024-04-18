@@ -10,6 +10,7 @@ func main() {
 	helpFlag := flag.Bool("help", false, "Display usage information")
 	excelFlag := flag.Bool("excel", false, "Enable to write output to an Excel file")
 	txtFlag := flag.Bool("txt", false, "Enable to write output to a text file")
+	verboseFlag := flag.Bool("verbose", false, "Print each visited URL to the terminal")
 
 	flag.Parse()
 
@@ -20,7 +21,7 @@ func main() {
 
 	// Vérifiez si l'URL à crawler est fournie en argument
 	if flag.NArg() < 1 {
-		fmt.Println("Usage: go run main.go [--excel|--txt] <url>")
+		printUsage()
 		os.Exit(1)
 	}
 	siteURL := flag.Arg(0)
@@ -33,10 +34,15 @@ func main() {
 	}
 
 	var stats *Stats
+	if *excelFlag && *verboseFlag {
+		stats = startCrawling(siteURL, true, true)
+	} else if *txtFlag && *verboseFlag {
+		stats = startCrawling(siteURL, false, true)
+	} else
 	if *excelFlag {
-		stats = startCrawling(siteURL, true)
+		stats = startCrawling(siteURL, true, false)
 	} else if *txtFlag {
-		stats = startCrawling(siteURL, false)
+		stats = startCrawling(siteURL, false, false)
 	} else {
 		fmt.Println("Error: Please specify either --excel or --txt")
 		os.Exit(1)
@@ -50,7 +56,7 @@ func main() {
 
 // Fonction pour afficher le message d'aide
 func printUsage() {
-	fmt.Println("Usage: go run main.go [--excel|--txt|--help] <url>")
+	fmt.Println("Usage: go run main.go [--excel|--txt|--verbose|--help] <url>")
 	fmt.Println("Options:")
 	flag.PrintDefaults()
 }
