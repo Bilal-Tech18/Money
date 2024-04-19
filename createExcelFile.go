@@ -92,10 +92,10 @@ func saveResultsToExcel(stats *Stats) {
 	f.SetCellValue("Sheet1", "A3", fmt.Sprintf("Total Hidden Inputs = %d", stats.TotalHiddenInputs))
 
 	f.SetCellValue("Sheet1", "A5", "URL")
-	f.SetCellValue("Sheet1", "B5", "Input ID")
-	f.SetCellValue("Sheet1", "C5", "Input Name")
-	f.SetCellValue("Sheet1", "D5", "Input Type")
-	f.SetCellStyle("Sheet1", "A5", "E5", TopPageStyle)
+	f.SetCellValue("Sheet1", "B5", "Input Name")
+	f.SetCellValue("Sheet1", "C5", "Input Type")
+	f.SetCellValue("Sheet1", "D5", "Input ID")
+	f.SetCellStyle("Sheet1", "A5", "D5", TopPageStyle)
 
 	row := 6
 	var lastURL string
@@ -124,14 +124,14 @@ func saveResultsToExcel(stats *Stats) {
 			}
 
 			// Appliquez le style déterminé par alternate et si c'est une nouvelle URL
-			f.SetCellStyle("Sheet1", fmt.Sprintf("A%d", row), fmt.Sprintf("E%d", row), styleToApply)
+			f.SetCellStyle("Sheet1", fmt.Sprintf("A%d", row), fmt.Sprintf("D%d", row), styleToApply)
 
 			// Définir les valeurs des autres cellules
-			f.SetCellValue("Sheet1", fmt.Sprintf("B%d", row), input.ID)
-			f.SetCellValue("Sheet1", fmt.Sprintf("C%d", row), input.Name)
-			f.SetCellValue("Sheet1", fmt.Sprintf("D%d", row), input.Type)
+			f.SetCellValue("Sheet1", fmt.Sprintf("B%d", row), input.Name)
+			f.SetCellValue("Sheet1", fmt.Sprintf("C%d", row), input.Type)
+			f.SetCellValue("Sheet1", fmt.Sprintf("D%d", row), input.ID)
 			if input.Type == "hidden" {
-				f.SetCellStyle("Sheet1", fmt.Sprintf("D%d", row), fmt.Sprintf("D%d", row), HiddenStyle)
+				f.SetCellStyle("Sheet1", fmt.Sprintf("C%d", row), fmt.Sprintf("C%d", row), HiddenStyle)
 			}
 
 			row++ // Passez à la ligne suivante
@@ -139,8 +139,8 @@ func saveResultsToExcel(stats *Stats) {
 	}
 
 	// Ajuster la largeur des colonnes
-	f.SetColWidth("Sheet1", "A", "A", 150)
-	f.SetColWidth("Sheet1", "B", "E", 35)
+	f.SetColWidth("Sheet1", "A", "A", 119)
+	f.SetColWidth("Sheet1", "B", "D", 35)
 
 	// Sauvegarde du fichier
 	if err := f.SaveAs("CrawlingResults.xlsx"); err != nil {
