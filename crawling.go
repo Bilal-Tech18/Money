@@ -7,25 +7,29 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-// Stats stocke les statistiques de crawling
-type Stats struct {
+type InputInfo struct {
+	ID   string
+	Name string
+	Type string
+}
+
+type PageInfo struct {
+	URL          string
+	Inputs       []InputInfo
+	HiddenInputs int
+}
+
+type Stats struct {  // Définissez la structure Stats ici
 	TotalPages        int
 	TotalInputs       int
 	TotalHiddenInputs int
 }
 
-// PageInfo stocke les informations sur chaque page visitée
-type PageInfo struct {
-	URL          string
-	InputsCount  int
-	HiddenInputs int
-}
-
 var visitedPages []PageInfo // Stocke les informations sur chaque page visitée
 
 // Fonction pour ajouter une page visitée à visitedPages
-func addVisitedPage(url string, inputsCount, hiddenInputs int) {
-	pageInfo := PageInfo{URL: url, InputsCount: inputsCount, HiddenInputs: hiddenInputs}
+func addVisitedPage(url string, inputs []InputInfo, hiddenInputs int) {
+	pageInfo := PageInfo{URL: url, Inputs: inputs, HiddenInputs: hiddenInputs}
 	visitedPages = append(visitedPages, pageInfo)
 }
 
@@ -45,27 +49,30 @@ func startCrawling(siteURL string, writeToExcel bool, verbose bool) *Stats {
 		c.Visit(link)
 	})
 
+	// Compter les éléments input et suivre les pages visitées
 	c.OnHTML("html", func(e *colly.HTMLElement) {
-		var inputCount int
+		var inputs []InputInfo
 		var hiddenInputCount int
 
-		// Compter tous les éléments input
 		e.ForEach("input", func(_ int, el *colly.HTMLElement) {
-			inputCount++
-			stats.TotalInputs++
-			// Compter spécifiquement les inputs de type hidden
-			if el.Attr("type") == "hidden" {
+			inputType := el.Attr("type")
+			inputs = append(inputs, InputInfo{
+				ID:   el.Attr("id"),
+				Name: el.Attr("name"),
+				Type: inputType,
+			})
+			if inputType == "hidden" {
 				hiddenInputCount++
-				stats.TotalHiddenInputs++
 			}
 		})
 
-		// Enregistrez les informations sur la page visitée
 		if verbose {
-			fmt.Println("Page visited:", e.Request.URL, "Inputs:", inputCount, "Hidden Inputs:", hiddenInputCount)
+			fmt.Println("Page visited:", e.Request.URL, "Total Inputs:", len(inputs), "Hidden Inputs:", hiddenInputCount)
 		}
-		addVisitedPage(e.Request.URL.String(), inputCount, hiddenInputCount)
+		addVisitedPage(e.Request.URL.String(), inputs, hiddenInputCount)
 		stats.TotalPages++
+		stats.TotalInputs += len(inputs)
+		stats.TotalHiddenInputs += hiddenInputCount
 	})
 
 	// Gérer les erreurs
