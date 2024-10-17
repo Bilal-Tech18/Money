@@ -23,7 +23,7 @@ You can run Spid3r directly by executing:
 
 bash
 
-go run main.go [--excel|--txt|--verbose|--help] <url>
+./crawling [--excel|--txt|--verbose|--help] <url>
 
 Options:
 
@@ -36,6 +36,6 @@ Example
 
 bash
 
-go run main.go --excel https://example.com
+./crawling --excel "https://example.com"
 
 This will crawl the website and save the results to an Excel file.
