@@ -8,11 +8,10 @@ import (
 func saveResultsToExcel(stats *Stats) {
 	f := excelize.NewFile()
 
-	// Style pour les totaux
 	totalStyle, err := f.NewStyle(&excelize.Style{
 		Fill: excelize.Fill{
 			Type:    "pattern",
-			Color:   []string{"#D3AF37"}, // Armenian Gold
+			Color:   []string{"#D3AF37"},
 			Pattern: 1,
 		},
 		Font: &excelize.Font{
@@ -27,7 +26,6 @@ func saveResultsToExcel(stats *Stats) {
 		return
 	}
 
-	// Style pour les Hidden Inputs avec couleur de fond rouge
 	HiddenStyle, err := f.NewStyle(&excelize.Style{
 		Fill: excelize.Fill{
 			Type:    "pattern",
@@ -46,11 +44,10 @@ func saveResultsToExcel(stats *Stats) {
 		return
 	}
 
-	// Style pour la première ligne avec une couleur de fond dorée
 	TopPageStyle, err := f.NewStyle(&excelize.Style{
 		Fill: excelize.Fill{
 			Type:    "pattern",
-			Color:   []string{"#B29700"}, // Light Gold
+			Color:   []string{"#B29700"},
 			Pattern: 1,
 		},
 		Font: &excelize.Font{
@@ -65,11 +62,10 @@ func saveResultsToExcel(stats *Stats) {
 		return
 	}
 
-	// Style pour les lignes paires avec une couleur de fond bleue
 	evenRowStyle, err := f.NewStyle(&excelize.Style{
 		Fill: excelize.Fill{
 			Type:    "pattern",
-			Color:   []string{"#2B6BBD"}, // Bleu
+			Color:   []string{"#2B6BBD"}, 
 			Pattern: 1,
 		},
 	})
@@ -78,15 +74,12 @@ func saveResultsToExcel(stats *Stats) {
 		return
 	}
 
-	// Style par défaut pour les lignes impaires
 	oddRowStyle := 0
 
-	// Application des styles pour les totaux
 	f.SetCellStyle("Sheet1", "A1", "A1", totalStyle)
 	f.SetCellStyle("Sheet1", "A2", "A2", totalStyle)
 	f.SetCellStyle("Sheet1", "A3", "A3", totalStyle)
 
-	// Ajout des données et des en-têtes
 	f.SetCellValue("Sheet1", "A1", fmt.Sprintf("Total Pages = %d", stats.TotalPages))
 	f.SetCellValue("Sheet1", "A2", fmt.Sprintf("Total Inputs = %d", stats.TotalInputs))
 	f.SetCellValue("Sheet1", "A3", fmt.Sprintf("Total Hidden Inputs = %d", stats.TotalHiddenInputs))
@@ -102,12 +95,12 @@ func saveResultsToExcel(stats *Stats) {
 	alternate := false
 
 	for _, page := range visitedPages {
-		firstInput := true // Utiliser cette variable pour déterminer si nous traitons le premier input d'une URL donnée
+		firstInput := true
 		for _, input := range page.Inputs {
 			if page.URL != lastURL {
 				alternate = !alternate
 				lastURL = page.URL
-				firstInput = true // Marquer que c'est le premier input de la nouvelle URL
+				firstInput = true
 			}
 
 			styleToApply := oddRowStyle
@@ -115,7 +108,6 @@ func saveResultsToExcel(stats *Stats) {
 				styleToApply = evenRowStyle
 			}
 
-			// Si c'est le premier input de la nouvelle URL, imprimez l'URL
 			if firstInput {
 				f.SetCellValue("Sheet1", fmt.Sprintf("A%d", row), page.URL)
 				firstInput = false
@@ -123,10 +115,8 @@ func saveResultsToExcel(stats *Stats) {
 				f.SetCellValue("Sheet1", fmt.Sprintf("A%d", row), "")
 			}
 
-			// Appliquez le style déterminé par alternate et si c'est une nouvelle URL
 			f.SetCellStyle("Sheet1", fmt.Sprintf("A%d", row), fmt.Sprintf("D%d", row), styleToApply)
 
-			// Définir les valeurs des autres cellules
 			f.SetCellValue("Sheet1", fmt.Sprintf("B%d", row), input.Name)
 			f.SetCellValue("Sheet1", fmt.Sprintf("C%d", row), input.Type)
 			f.SetCellValue("Sheet1", fmt.Sprintf("D%d", row), input.ID)
@@ -134,15 +124,13 @@ func saveResultsToExcel(stats *Stats) {
 				f.SetCellStyle("Sheet1", fmt.Sprintf("C%d", row), fmt.Sprintf("C%d", row), HiddenStyle)
 			}
 
-			row++ // Passez à la ligne suivante
+			row++
 		}
 	}
 
-	// Ajuster la largeur des colonnes
 	f.SetColWidth("Sheet1", "A", "A", 119)
 	f.SetColWidth("Sheet1", "B", "D", 35)
 
-	// Sauvegarde du fichier
 	if err := f.SaveAs("CrawlingResults.xlsx"); err != nil {
 		fmt.Println("Failed to save Excel file:", err)
 	}

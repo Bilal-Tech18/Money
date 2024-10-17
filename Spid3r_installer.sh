@@ -18,6 +18,9 @@ export PATH="$GOPATH/bin:$PATH"
 echo "Installing dependencies..."
 go get -u github.com/gocolly/colly/v2
 go get -u github.com/xuri/excelize/v2
+go get go.mongodb.org/mongo-driver/mongo
+go get github.com/dgrijalva/jwt-go
+
 
 # Build your tool or install additional dependencies if needed
 # go build or go install

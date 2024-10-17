@@ -19,7 +19,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	// Vérifiez si l'URL à crawler est fournie en argument
 	if flag.NArg() < 1 {
 		printUsage()
 		os.Exit(1)
@@ -54,7 +53,6 @@ func main() {
 	}
 }
 
-// Fonction pour afficher le message d'aide
 func printUsage() {
 	fmt.Println("Usage: go run main.go [--excel|--txt|--verbose|--help] <url>")
 	fmt.Println("Options:")
