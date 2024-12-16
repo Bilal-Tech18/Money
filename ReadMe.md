@@ -1,57 +1,55 @@
 # Spid3r - Website Crawler
 
-**Spid3r** est un outil puissant conçu pour crawler les sites web, en extrayant chaque page, champ de saisie (`input`, `textarea`), et bouton (`button`, `a`, `div`, `span` avec des rôles interactifs). Il offre des options de sortie flexibles, permettant de sauvegarder les résultats aux formats Excel, texte ou JSON, ce qui le rend idéal pour diverses applications telles que la collecte de données et l'analyse de sites web.
+**Spid3r** is a powerful tool designed to crawl websites, extracting every page, input field (`input`, `textarea`), and button (`button`, `a`, `div`, `span` with interactive roles). It offers flexible output options, allowing results to be saved in Excel, text or JSON formats, making it ideal for a variety of applications such as data collection and website analysis.
+
+![spider](https://github.com/user-attachments/assets/db2079af-b30c-4bd2-b439-63a5f1509256)
 
 ## Installation
 
-Avant d'utiliser Spid3r, assurez-vous que toutes les bibliothèques requises sont installées en exécutant le script d'installation :
+Before using Spid3r, please ensure that all required libraries are installed by running the installation script:
 
 ```
 ./Spid3r_installer.sh
 ```
-## Compilation de l'outil
+## Tool Compilation
 
-Une fois les dépendances installées, compilez l'outil en utilisant la commande suivante :
+Once all dependencies have been installed, compile the tool using the following command:
 
 ```
 go build crawling.go createExcelFile.go createTxtFile.go saveJson.go main.go
 ```
-## Utilisation
+## Usage
 
-Vous pouvez exécuter Spid3r directement avec la commande suivante :
+You can run Spid3r directly with the following command:
 
 ```
 ./crawling [--excel|--txt|--json|--verbose|--help] <url>
 ```
+
 ### Options :
 
---excel : Sauvegarde la sortie dans un fichier Excel.
---txt : Sauvegarde la sortie dans un fichier texte.
---json : Sauvegarde la sortie dans un fichier JSON.
---verbose : Affiche chaque URL visitée dans le terminal ainsi que les informations sur les éléments trouvés (inputs, boutons, etc.).
---help : Affiche les informations d'utilisation.
+--excel: Saves the output as an Excel file.
+--txt: Saves the output as a text file.
+--json: Saves the output as a JSON file.
+--verbose: Displays each URL visited in the terminal, as well as information on elements found (inputs, buttons, etc.).
+--help: Displays usage information.
 
-### Fonctionnalités
+### Features
 
-Détection d'éléments de saisie : Identifie tous les éléments input et textarea.
-Détection des boutons :
-    Repère tous les boutons HTML (<button>).
-    Identifie les liens <a> avec role="button".
-    Détecte les div et span ayant role="button" ou des attributs d'accessibilité comme aria-pressed ou aria-haspopup.
-Options de sortie : Enregistre les résultats sous forme de fichier Excel, texte ou JSON, permettant une analyse approfondie.
+Input Element Detection: Identifies all input and textarea elements.
 
-Exemple
+Button Detection:
+   - Detects all HTML `<button>` elements.
+   - Identifies `<a>` links with `role="button"`.
+   - Detects `<div>` and `<span>` elements with `role="button"` or accessibility attributes like `aria-pressed` or `aria-haspopup`.
+
+Output Options: Saves the results in Excel, text, or JSON format for detailed analysis.
+
+### Example Commande:
+
 
 ```
-./crawling --excel "https://example.com"
+./crawling --json “https://example.com”
 ```
 
-Cette commande crawl le site web et sauvegarde les résultats dans un fichier Excel.
-
-
-
-
----
-
-Ce fichier `README.md` fournit une explication claire et détaillée des fonctionnalités, de l’installation, de la compilation et de l’utilisation de l'outil **Spid3r**.
-
+This command crawls the website and saves the results in a JSON file.
